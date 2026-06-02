@@ -136,9 +136,9 @@ function initGame(scene, camera, renderer) {
   // Pointer lock change
   document.addEventListener('pointerlockchange', () => {
     GAME.mouseLocked = !!document.pointerLockElement;
-    if (!GAME.mouseLocked && GAME.state.phase === 'live') {
-      // auto pause feel
-      showCenterMessage('Click to resume', 'MOUSE UNLOCKED');
+    const phase = GAME.state.phase;
+    if (!GAME.mouseLocked && (phase === 'live' || phase === 'buy')) {
+      window.CSUI.showCenterMessage('Click the game to lock mouse and play');
     } else {
       window.CSUI.hideCenterMessage();
     }
@@ -246,12 +246,17 @@ function tryReload() {
   }
 }
 
-function lockMouse() {
+async function lockMouse() {
   const canvas = document.getElementById('three-canvas');
   canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock;
-  canvas.requestPointerLock();
-  if (window.CSAudio) window.CSAudio.resume();
-  window.CSUI.hideCenterMessage();
+  try {
+    await canvas.requestPointerLock();
+    if (window.CSAudio) window.CSAudio.resume();
+    window.CSUI.hideCenterMessage();
+  } catch (e) {
+    console.warn('Pointer lock failed (user gesture required?):', e);
+    window.CSUI.showCenterMessage('Click the game to lock mouse and play');
+  }
 }
 
 function togglePause() {
@@ -435,7 +440,9 @@ function startLivePhase() {
   window.CSUI.hideCenterMessage();
   window.CSUI.hideBuyMenu();
   buyMenuOpen = false;
-  lockMouse();
+  window.CSUI.showCenterMessage('Click the game to lock mouse and play');
+  // Do not auto-lock here (setTimeout loses user gesture in some browsers).
+  // mousedown listener will call lockMouse() on first click.
 }
 
 function plantBomb(siteKey) {
