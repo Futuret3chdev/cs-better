@@ -137,6 +137,18 @@ git push
 
 ---
 
+## Important Notes Specific to This Game
+
+- **HTTPS is required for:**
+  - Mouse pointer lock (aiming)
+  - Web Audio (gunshots, etc.)
+  - Wallet signing (claiming Rockets)
+- Vercel gives you HTTPS automatically (GitHub Pages is possible but less ideal for the wallet features).
+- Wallet integration (Phantom / Solflare / Backpack) only works when the site is served over HTTPS.
+- The MemeTorrent P2E features (Rockets, wallet connect, claim) are fully client-side and work immediately after deploy.
+
+---
+
 ## Updating the Game Later
 
 1. Make changes locally
