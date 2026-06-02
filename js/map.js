@@ -7,7 +7,11 @@ function buildDustMini(scene) {
 
   const addBox = (x, y, z, sx, sy, sz, color = 0x8d7b5e, roughness = 0.9) => {
     const geo = new THREE.BoxGeometry(sx, sy, sz);
-    const mat = new THREE.MeshLambertMaterial({ color, flatShading: false });
+    const mat = new THREE.MeshPhongMaterial({ 
+      color, 
+      shininess: 15,
+      specular: 0x222222
+    });
     const mesh = new THREE.Mesh(geo, mat);
     mesh.position.set(x, y, z);
     mesh.castShadow = true;
@@ -102,6 +106,11 @@ function buildDustMini(scene) {
   const light2 = new THREE.PointLight(0xffddaa, 0.6, 22);
   light2.position.set(11, 6.5, -5);
   scene.add(light2);
+
+  // Extra fill light for better visuals
+  const light3 = new THREE.PointLight(0xccccff, 0.4, 40);
+  light3.position.set(-5, 5, 10);
+  scene.add(light3);
 
   // Basic ambient + sun
   const hemi = new THREE.HemisphereLight(0xaaaaff, 0x443322, 0.55);
