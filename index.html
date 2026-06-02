@@ -34,11 +34,14 @@
         <div id="radar-label">RADAR</div>
       </div>
 
-      <!-- Money -->
-      <div id="money">$1600</div>
-
-      <!-- MT Rockets (P2E for MemeTorrent) -->
-      <div id="mt-rockets-hud" onclick="window.showConnectModal && window.showConnectModal()" style="position:absolute;top:16px;right:180px;background:rgba(10,10,10,0.85);border:1px solid #c8a25f;border-radius:3px;padding:2px 8px;font-size:11px;color:#c8a25f;cursor:pointer;z-index:11" title="Click to connect wallet & claim Rockets for MT ecosystem">🚀 <span id="mt-rockets-val">0</span></div>
+      <!-- Top right: Money + MT Rockets -->
+      <div id="top-right" onclick="window.showConnectModal && window.showConnectModal()" title="Click to connect wallet & claim Rockets for MemeTorrent P2E">
+        <div id="money">$1600</div>
+        <div id="mt-rockets-hud" class="mt-pill">
+          <span class="mt-label">🚀</span>
+          <span id="mt-rockets-val">0</span>
+        </div>
+      </div>
 
       <!-- Round / Timer -->
       <div id="round-info">
@@ -116,21 +119,20 @@
     <div id="menu-overlay">
       <div class="menu-box">
         <h1>CS: BETTER</h1>
-        <div class="tagline">COUNTER-STRIKE BUT BETTER — P2E for MemeTorrent by memetorrent &amp; futuret3ch</div>
+        <div class="tagline">COUNTER-STRIKE BUT BETTER</div>
 
         <button class="menu-btn" id="btn-resume" style="display:none">RESUME</button>
         <button class="menu-btn" id="btn-start">START MATCH</button>
         <button class="menu-btn secondary" id="btn-settings">SETTINGS</button>
         <button class="menu-btn secondary" id="btn-howto">HOW TO PLAY</button>
 
-        <div style="margin:16px 0 8px;border-top:1px solid #222;padding-top:12px">
-          <button class="menu-btn" id="btn-connect-wallet" style="background:#222;border-color:#c8a25f">🔗 CONNECT WALLET (Phantom / Solflare / Backpack)</button>
-          <div id="wallet-menu-status" style="font-size:11px;margin-top:6px;color:#888;text-align:center"></div>
+        <div class="mt-section">
+          <button class="menu-btn" id="btn-connect-wallet">🔗 CONNECT WALLET</button>
+          <div id="wallet-menu-status" class="wallet-status"></div>
+          <div class="mt-hint">🚀 Earn Rockets for MemeTorrent P2E • by memetorrent &amp; futuret3ch</div>
         </div>
 
-        <div class="hint" style="margin-top:8px;font-size:10px">🚀 Earn Rockets for the MemeTorrent P2E ecosystem • Created by memetorrent &amp; futuret3ch</div>
-
-        <div class="hint" style="margin-top:20px">Click anywhere in game to lock mouse • ESC to unlock</div>
+        <div class="hint" style="margin-top:20px">Click the game to lock mouse • ESC to unlock</div>
       </div>
     </div>
 

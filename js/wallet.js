@@ -84,8 +84,8 @@ async function connectWallet(walletId) {
     // Update UI
     updateWalletUI();
 
-    // Try to fetch SOL balance (nice to have)
-    fetchAndShowBalance(pubKey);
+    // Balance display removed for cleaner HUD; can add later if wanted
+    // fetchAndShowBalance(pubKey);
 
     // Announce to game
     if (window.CSGame && window.CSGame.GAME) {
@@ -171,22 +171,7 @@ function saveWalletStats(pubKeyStr) {
   } catch (e) {}
 }
 
-async function fetchAndShowBalance(pubKey) {
-  const conn = getSolanaConnection();
-  if (!conn) return;
-
-  try {
-    const balanceLamports = await conn.getBalance(pubKey);
-    const sol = (balanceLamports / 1e9).toFixed(3);
-
-    const balEl = document.getElementById('wallet-balance');
-    if (balEl) balEl.textContent = `${sol} SOL`;
-
-    // TODO: could fetch $MT SPL balance here for full integration
-  } catch (e) {
-    console.warn('Balance fetch failed', e);
-  }
-}
+async // Balance fetch removed (was using old #wallet-balance element)
 
 async function claimRockets() {
   if (!walletState.connected || !walletState.provider) {
@@ -285,33 +270,36 @@ function updateWalletUI() {
   const mtVal = document.getElementById('mt-rockets-val');
   if (mtVal) mtVal.textContent = Math.floor(walletState.rocketsEarned);
 
-  const mtRockets = document.getElementById('mt-rockets');
-  if (mtRockets) mtRockets.textContent = Math.floor(walletState.rocketsEarned);
-
-  // Update claim button visibility next to mt hud
+  // Update claim button visibility 
   const claimHud = document.getElementById('wallet-claim-hud');
   if (claimHud) {
     claimHud.style.display = (walletState.rocketsEarned > 0 && walletState.connected) ? 'inline-block' : 'none';
   }
 
+  const topRight = document.getElementById('top-right');
   const mtHud = document.getElementById('mt-rockets-hud');
-  if (mtHud && walletState.connected && walletState.publicKey) {
-    mtHud.title = `${walletState.walletName} • ${shortAddress(walletState.publicKey)} — Click to claim or manage Rockets for MT`;
-    // show short wallet in the hud itself for visibility
-    const existing = mtHud.querySelector('.mt-addr');
-    if (!existing) {
-      const addr = document.createElement('span');
-      addr.className = 'mt-addr';
-      addr.style.cssText = 'margin-left:6px;opacity:0.6;font-size:9px';
-      addr.textContent = shortAddress(walletState.publicKey);
-      mtHud.appendChild(addr);
+  if (topRight) {
+    if (walletState.connected && walletState.publicKey) {
+      topRight.classList.add('connected');
+      topRight.title = `${walletState.walletName} • ${shortAddress(walletState.publicKey)} — Click for MT wallet`;
+      // small addr hint inside pill
+      if (mtHud) {
+        let addr = mtHud.querySelector('.mt-addr');
+        if (!addr) {
+          addr = document.createElement('span');
+          addr.className = 'mt-addr';
+          mtHud.appendChild(addr);
+        }
+        addr.textContent = shortAddress(walletState.publicKey);
+      }
     } else {
-      existing.textContent = shortAddress(walletState.publicKey);
+      topRight.classList.remove('connected');
+      topRight.title = 'Click to connect wallet & earn/claim Rockets for MemeTorrent P2E';
+      if (mtHud) {
+        const addr = mtHud.querySelector('.mt-addr');
+        if (addr) addr.remove();
+      }
     }
-  } else if (mtHud) {
-    mtHud.title = 'Click to connect wallet & earn/claim Rockets for MemeTorrent P2E (memetorrent & futuret3ch)';
-    const addr = mtHud.querySelector('.mt-addr');
-    if (addr) addr.remove();
   }
 }
 
@@ -373,9 +361,9 @@ function initWalletUI() {
   if (mtHud && !document.getElementById('wallet-claim-hud')) {
     const claim = document.createElement('button');
     claim.id = 'wallet-claim-hud';
+    claim.className = 'wallet-claim';
     claim.textContent = 'CLAIM';
-    claim.style.cssText = 'margin-left:6px;background:#c8a25f;color:#111;border:none;padding:1px 5px;border-radius:2px;font-size:9px;font-weight:700;cursor:pointer';
-    claim.onclick = () => window.CSWallet && window.CSWallet.claim();
+    claim.onclick = (e) => { e.stopPropagation(); window.CSWallet && window.CSWallet.claim(); };
     mtHud.appendChild(claim);
   }
 
@@ -390,34 +378,16 @@ function addWalletStyles() {
   const style = document.createElement('style');
   style.id = 'wallet-styles';
   style.textContent = `
-    .wallet-hud {
-      position: absolute;
-      top: 16px;
-      right: 200px;
-      background: rgba(10,10,10,0.85);
-      border: 1px solid #333;
-      border-radius: 4px;
-      padding: 4px 10px;
-      font-size: 12px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      color: #ddd;
-      z-index: 12;
-      cursor: pointer;
-    }
-    .wallet-hud.connected {
-      border-color: #c8a25f;
-    }
     .wallet-claim {
       background: #c8a25f;
       color: #111;
       border: none;
-      padding: 2px 8px;
+      padding: 1px 5px;
       border-radius: 2px;
-      font-size: 10px;
+      font-size: 9px;
       font-weight: 700;
       cursor: pointer;
+      margin-left: 4px;
     }
     .wallet-toast {
       position: fixed;
@@ -427,32 +397,33 @@ function addWalletStyles() {
       background: #111;
       border: 2px solid #c8a25f;
       color: #c8a25f;
-      padding: 12px 24px;
+      padding: 10px 18px;
       border-radius: 4px;
-      font-size: 14px;
+      font-size: 13px;
       z-index: 100;
-      max-width: 420px;
+      max-width: 380px;
       text-align: center;
       box-shadow: 0 0 20px rgba(200,162,95,0.3);
+      white-space: pre-line;
     }
     .wallet-toast.fade { opacity: 0; transition: opacity .3s; }
     .rocket-float {
       position: fixed;
       left: 50%;
-      top: 45%;
+      top: 42%;
       transform: translate(-50%, -50%);
       color: #c8a25f;
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 700;
       pointer-events: none;
       z-index: 90;
-      animation: rocketPop 1.3s forwards;
-      text-shadow: 0 0 8px #000;
+      animation: rocketPop 1.2s forwards;
+      text-shadow: 0 0 6px #000;
     }
     @keyframes rocketPop {
-      0% { opacity:1; transform: translate(-50%, -50%) scale(0.6); }
-      30% { opacity:1; }
-      100% { opacity:0; transform: translate(-50%, -120%) scale(1.1); }
+      0% { opacity:1; transform: translate(-50%, -50%) scale(0.7); }
+      40% { opacity:1; }
+      100% { opacity:0; transform: translate(-50%, -140%) scale(1); }
     }
     #connect-modal {
       position: fixed;

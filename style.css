@@ -88,12 +88,53 @@ body, html {
 
 /* Money (top right) */
 #money {
-  top: 16px;
-  right: 20px;
-  font-size: 28px;
+  font-size: 22px;
   font-weight: 700;
   color: var(--accent);
   text-shadow: 0 0 8px rgba(200, 162, 95, 0.5);
+  line-height: 1;
+}
+
+/* Top right container for money + MT rockets pill */
+#top-right {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  z-index: 12;
+  cursor: pointer;
+}
+#top-right #money {
+  font-size: 20px;
+}
+.mt-pill {
+  background: rgba(10,10,10,0.85);
+  border: 1px solid #333;
+  border-radius: 3px;
+  padding: 1px 6px;
+  font-size: 10px;
+  color: #c8a25f;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+}
+#top-right.connected .mt-pill {
+  border-color: #c8a25f;
+}
+#top-right:hover {
+  opacity: 0.9;
+}
+.mt-addr {
+  margin-left: 4px;
+  opacity: 0.6;
+  font-size: 9px;
+  font-family: monospace;
+}
+.mt-label {
+  margin-right: 2px;
 }
 
 /* Round / Timer center top */
@@ -385,9 +426,11 @@ body, html {
 .menu-box {
   background: #111;
   border: 1px solid #333;
-  padding: 32px 48px;
-  min-width: 320px;
+  padding: 28px 36px;
+  min-width: 300px;
+  max-width: 380px;
   text-align: center;
+  border-radius: 4px;
 }
 
 .menu-box h1 {
@@ -463,9 +506,10 @@ body, html {
   position: absolute;
   bottom: 4px;
   left: 4px;
-  font-size: 10px;
-  color: #444;
+  font-size: 9px;
+  color: #222;
   z-index: 5;
+  opacity: 0.6;
 }
 
 /* Damage / Hit indicator */
@@ -480,30 +524,11 @@ body, html {
 }
 
 /* MemeTorrent Wallet + Rockets styles */
-.wallet-hud {
-  position: absolute;
-  top: 16px;
-  right: 260px;
-  background: rgba(10,10,10,0.9);
-  border: 1px solid #333;
-  border-radius: 4px;
-  padding: 3px 8px;
-  font-size: 11px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  color: #ddd;
-  z-index: 12;
-  cursor: pointer;
-  max-width: 240px;
-}
-.wallet-hud.connected { border-color: #c8a25f; }
-.wallet-info { display:flex; align-items:center; gap:4px; }
 .wallet-claim {
   background: #c8a25f;
   color: #111;
   border: none;
-  padding: 1px 6px;
+  padding: 1px 5px;
   border-radius: 2px;
   font-size: 9px;
   font-weight: 700;
@@ -545,4 +570,29 @@ body, html {
   0% { opacity:1; transform: translate(-50%, -50%) scale(0.7); }
   40% { opacity:1; }
   100% { opacity:0; transform: translate(-50%, -140%) scale(1); }
+}
+
+/* Clean MT / wallet section in menu */
+.mt-section {
+  margin: 16px 0 8px;
+  border-top: 1px solid #222;
+  padding-top: 12px;
+}
+.mt-section .menu-btn {
+  background: #1f1f1f;
+  border-color: #c8a25f;
+  font-size: 13px;
+  padding: 8px 12px;
+}
+.wallet-status {
+  font-size: 11px;
+  margin-top: 6px;
+  color: #888;
+  text-align: center;
+}
+.mt-hint {
+  margin-top: 8px;
+  font-size: 10px;
+  color: #666;
+  text-align: center;
 }
