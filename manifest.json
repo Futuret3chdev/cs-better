@@ -1,0 +1,11 @@
+{
+  "name": "CS: Better",
+  "short_name": "CS Better",
+  "description": "Counter-Strike but better. Fully playable tactical FPS in the browser.",
+  "start_url": "/",
+  "display": "fullscreen",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+  "orientation": "landscape",
+  "icons": []
+}

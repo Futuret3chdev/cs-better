@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>CS: Better — Tactical FPS</title>
+  <meta name="description" content="Counter-Strike but better. A fully playable browser tactical FPS with deterministic recoil, procedural audio, bomb defusal, and smart bots. Pure client-side — no install.">
+  <meta name="theme-color" content="#0a0a0a">
+
+  <!-- Open Graph / Social -->
+  <meta property="og:title" content="CS: Better — Tactical FPS">
+  <meta property="og:description" content="Counter-Strike but better. Play a polished browser-based tactical shooter with learnable sprays, full round economy, and bomb defusal.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="assets/preview.jpg">
+
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+
+  <style>
+    /* Extra inline for quick tweaks */
+    .loading { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:#000; color:#666; font-size:13px; z-index:100; }
+  </style>
+</head>
+<body>
+  <div id="game-container">
+    <!-- Three.js Canvas -->
+    <canvas id="three-canvas"></canvas>
+
+    <!-- HUD -->
+    <div id="hud">
+      <!-- Radar -->
+      <div id="radar">
+        <canvas id="radar-canvas" width="148" height="148"></canvas>
+        <div id="radar-label">RADAR</div>
+      </div>
+
+      <!-- Money -->
+      <div id="money">$1600</div>
+
+      <!-- MT Rockets (P2E for MemeTorrent) -->
+      <div id="mt-rockets-hud" onclick="window.showConnectModal && window.showConnectModal()" style="position:absolute;top:16px;right:180px;background:rgba(10,10,10,0.85);border:1px solid #c8a25f;border-radius:3px;padding:2px 8px;font-size:11px;color:#c8a25f;cursor:pointer;z-index:11" title="Click to connect wallet & claim Rockets for MT ecosystem">🚀 <span id="mt-rockets-val">0</span></div>
+
+      <!-- Round / Timer -->
+      <div id="round-info">
+        <div id="round-teams">
+          <div class="team-score ct" id="score-ct">CT 0</div>
+          <div class="team-score t" id="score-t">T 0</div>
+        </div>
+        <div id="round-timer">1:55</div>
+      </div>
+
+      <!-- Bottom left status -->
+      <div id="status-left">
+        <div class="status-bar">
+          <span class="status-label">HP</span>
+          <div class="bar-bg"><div class="bar-fill health" id="health-bar" style="width:100%"></div></div>
+          <span id="health-text">100</span>
+        </div>
+        <div class="status-bar">
+          <span class="status-label">AP</span>
+          <div class="bar-bg"><div class="bar-fill armor" id="armor-bar" style="width:100%"></div></div>
+          <span id="armor-text">100</span>
+        </div>
+      </div>
+
+      <!-- Bottom right ammo -->
+      <div id="status-right">
+        <div>
+          <span id="ammo">20</span><span id="ammo-reserve">/ 120</span>
+        </div>
+        <div id="weapon-name">GLOCK-18</div>
+      </div>
+
+      <!-- Killfeed -->
+      <div id="killfeed"></div>
+    </div>
+
+    <!-- Crosshair -->
+    <div id="crosshair">
+      <div id="crosshair-dot"></div>
+    </div>
+
+    <!-- Center messages (press to start, round info, etc) -->
+    <div id="center-message"></div>
+
+    <!-- Damage flash overlay -->
+    <div id="damage-overlay"></div>
+
+    <!-- Win banner -->
+    <div id="win-banner"></div>
+
+    <!-- Buy Menu -->
+    <div id="buy-menu">
+      <div class="buy-header">
+        <h2>BUY MENU</h2>
+        <div id="buy-money">$1600</div>
+      </div>
+
+      <div class="buy-section">
+        <div class="buy-section-title">Pistols</div>
+        <div class="buy-grid" id="buy-pistols"></div>
+      </div>
+      <div class="buy-section">
+        <div class="buy-section-title">Rifles</div>
+        <div class="buy-grid" id="buy-rifles"></div>
+      </div>
+      <div class="buy-section">
+        <div class="buy-section-title">Gear</div>
+        <div class="buy-grid" id="buy-gear"></div>
+      </div>
+
+      <div class="hint">Press B or ESC to close • Numbers 1-9 also work • Click item to buy</div>
+    </div>
+
+    <!-- Main / Pause Menu -->
+    <div id="menu-overlay">
+      <div class="menu-box">
+        <h1>CS: BETTER</h1>
+        <div class="tagline">COUNTER-STRIKE BUT BETTER — P2E for MemeTorrent by memetorrent &amp; futuret3ch</div>
+
+        <button class="menu-btn" id="btn-resume" style="display:none">RESUME</button>
+        <button class="menu-btn" id="btn-start">START MATCH</button>
+        <button class="menu-btn secondary" id="btn-settings">SETTINGS</button>
+        <button class="menu-btn secondary" id="btn-howto">HOW TO PLAY</button>
+
+        <div style="margin:16px 0 8px;border-top:1px solid #222;padding-top:12px">
+          <button class="menu-btn" id="btn-connect-wallet" style="background:#222;border-color:#c8a25f">🔗 CONNECT WALLET (Phantom / Solflare / Backpack)</button>
+          <div id="wallet-menu-status" style="font-size:11px;margin-top:6px;color:#888;text-align:center"></div>
+        </div>
+
+        <div class="hint" style="margin-top:8px;font-size:10px">🚀 Earn Rockets for the MemeTorrent P2E ecosystem • Created by memetorrent &amp; futuret3ch</div>
+
+        <div class="hint" style="margin-top:20px">Click anywhere in game to lock mouse • ESC to unlock</div>
+      </div>
+    </div>
+
+    <div id="fps">0 fps</div>
+  </div>
+
+  <!-- Three.js (vendored) -->
+  <script src="js/three.min.js"></script>
+  <!-- Solana web3 (vendored for wallet connect + MT ecosystem integration) -->
+  <script src="js/solana-web3.min.js"></script>
+  <script src="js/wallet.js"></script>
+
+  <!-- Game code -->
+  <script src="js/audio.js"></script>
+  <script src="js/weapons.js"></script>
+  <script src="js/entities.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

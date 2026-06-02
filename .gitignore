@@ -1,0 +1,32 @@
+# OS / Editor
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+npm-debug.log*
+
+# Dependencies (if you ever add any)
+node_modules/
+package-lock.json
+
+# Build / temp
+dist/
+build/
+.cache/
+.vercel/
+
+# IDE
+.idea/
+.vscode/
+*.code-workspace
+
+# Misc
+.env
+.env.local
+*.bak
+*.tmp

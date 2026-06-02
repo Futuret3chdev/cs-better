@@ -1,0 +1,548 @@
+/* CS: Better — Tactical Dark Theme */
+:root {
+  --bg: #0a0a0a;
+  --panel: #111;
+  --accent: #c8a25f; /* CS gold */
+  --ct: #5b9bd5;
+  --t: #d9534f;
+  --text: #e8e8e8;
+  --muted: #888;
+  --health: #4ade80;
+  --armor: #60a5fa;
+  --danger: #ef4444;
+}
+
+* {
+  box-sizing: border-box;
+  user-select: none;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+  color: var(--text);
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  line-height: 1.3;
+}
+
+#game-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+}
+
+#three-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  outline: none;
+}
+
+/* ===== HUD ===== */
+#hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+  font-weight: 600;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+}
+
+.hud-element {
+  position: absolute;
+  color: #fff;
+}
+
+/* Radar (classic top-left) */
+#radar {
+  top: 16px;
+  left: 16px;
+  width: 148px;
+  height: 148px;
+  background: rgba(10, 10, 10, 0.85);
+  border: 2px solid #333;
+  border-radius: 4px;
+  overflow: hidden;
+  pointer-events: auto;
+}
+
+#radar-canvas {
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+
+#radar-label {
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  font-size: 10px;
+  color: #666;
+  letter-spacing: 1px;
+}
+
+/* Money (top right) */
+#money {
+  top: 16px;
+  right: 20px;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--accent);
+  text-shadow: 0 0 8px rgba(200, 162, 95, 0.5);
+}
+
+/* Round / Timer center top */
+#round-info {
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  font-size: 13px;
+  letter-spacing: 2px;
+}
+
+#round-timer {
+  font-size: 32px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #fff;
+  margin-top: -4px;
+}
+
+#round-teams {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: -2px;
+}
+
+.team-score {
+  font-size: 13px;
+  padding: 1px 8px;
+  border-radius: 2px;
+}
+
+.team-score.ct { background: rgba(91, 155, 213, 0.2); color: var(--ct); }
+.team-score.t { background: rgba(217, 83, 79, 0.2); color: var(--t); }
+
+/* Bottom left: Health + Armor */
+#status-left {
+  bottom: 16px;
+  left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 13px;
+}
+
+.status-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 210px;
+}
+
+.status-label {
+  width: 14px;
+  font-size: 11px;
+  color: #aaa;
+}
+
+.bar-bg {
+  flex: 1;
+  height: 10px;
+  background: #222;
+  border: 1px solid #444;
+  position: relative;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  transition: width 80ms linear;
+}
+
+.bar-fill.health { background: var(--health); }
+.bar-fill.armor { background: var(--armor); }
+
+#health-text, #armor-text {
+  width: 32px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Bottom right: Ammo + Weapon */
+#status-right {
+  bottom: 16px;
+  right: 18px;
+  text-align: right;
+  font-size: 13px;
+}
+
+#ammo {
+  font-size: 26px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+#ammo-reserve {
+  font-size: 15px;
+  color: #aaa;
+  margin-left: 4px;
+}
+
+#weapon-name {
+  font-size: 12px;
+  color: #ccc;
+  letter-spacing: 1px;
+  margin-top: -2px;
+}
+
+/* Killfeed (top right below money) */
+#killfeed {
+  top: 58px;
+  right: 20px;
+  width: 260px;
+  text-align: right;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.kill-row {
+  padding: 1px 0;
+  color: #ddd;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+}
+
+.kill-row .killer { color: #fff; }
+.kill-row .victim { color: #bbb; }
+.kill-row .hs { color: #f59e0b; font-size: 11px; }
+.kill-row .weapon { color: #888; font-size: 10px; }
+
+/* Crosshair */
+#crosshair {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 20;
+}
+
+.crosshair-line {
+  position: absolute;
+  background: #fff;
+  box-shadow: 0 0 1px #000, 0 0 1px #000;
+}
+
+#crosshair .h { height: 1px; }
+#crosshair .v { width: 1px; }
+
+/* Center dot */
+#crosshair-dot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 2px;
+  height: 2px;
+  background: #fff;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+}
+
+/* Instructions / Center messages */
+#center-message {
+  position: absolute;
+  left: 50%;
+  top: 38%;
+  transform: translate(-50%, -50%);
+  font-size: 15px;
+  color: #ddd;
+  text-align: center;
+  pointer-events: none;
+  z-index: 30;
+  text-shadow: 0 2px 8px #000;
+}
+
+#center-message.big {
+  font-size: 42px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+#center-message .sub {
+  font-size: 14px;
+  color: #999;
+  margin-top: 6px;
+}
+
+/* Buy Menu */
+#buy-menu {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+  z-index: 50;
+  display: none;
+  pointer-events: auto;
+  padding: 40px 60px;
+  overflow-y: auto;
+}
+
+#buy-menu.show {
+  display: block;
+}
+
+.buy-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #333;
+  padding-bottom: 12px;
+}
+
+.buy-header h2 {
+  margin: 0;
+  color: var(--accent);
+  font-size: 22px;
+  letter-spacing: 1px;
+}
+
+#buy-money {
+  font-size: 20px;
+  color: var(--accent);
+}
+
+.buy-section {
+  margin-bottom: 22px;
+}
+
+.buy-section-title {
+  color: #666;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.buy-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+  gap: 8px;
+}
+
+.buy-item {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: all 60ms ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.buy-item:hover {
+  border-color: var(--accent);
+  background: #222;
+}
+
+.buy-item.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.buy-item .name { font-weight: 600; }
+.buy-item .price { color: var(--accent); font-size: 13px; }
+
+/* Pause / Main Menu overlay */
+#menu-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  z-index: 60;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  pointer-events: auto;
+}
+
+#menu-overlay.show {
+  display: flex;
+}
+
+.menu-box {
+  background: #111;
+  border: 1px solid #333;
+  padding: 32px 48px;
+  min-width: 320px;
+  text-align: center;
+}
+
+.menu-box h1 {
+  margin: 0 0 6px;
+  font-size: 28px;
+  color: var(--accent);
+  letter-spacing: 2px;
+}
+
+.menu-box .tagline {
+  color: #666;
+  font-size: 12px;
+  margin-bottom: 24px;
+}
+
+.menu-btn {
+  display: block;
+  width: 100%;
+  background: #222;
+  border: 1px solid #444;
+  color: #fff;
+  padding: 12px 20px;
+  margin: 6px 0;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 80ms;
+}
+
+.menu-btn:hover {
+  background: var(--accent);
+  color: #111;
+  border-color: var(--accent);
+}
+
+.menu-btn.secondary {
+  background: transparent;
+  border-color: #555;
+}
+
+.menu-btn.secondary:hover {
+  background: #1f1f1f;
+  color: #fff;
+}
+
+/* Round win banner */
+#win-banner {
+  position: absolute;
+  left: 50%;
+  top: 28%;
+  transform: translate(-50%, -50%);
+  padding: 12px 36px;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  z-index: 40;
+  display: none;
+  text-shadow: 0 0 20px currentColor;
+  border: 3px solid currentColor;
+}
+
+#win-banner.ct { color: var(--ct); border-color: var(--ct); }
+#win-banner.t { color: var(--t); border-color: var(--t); }
+
+/* Misc */
+.hint {
+  font-size: 11px;
+  color: #555;
+  margin-top: 16px;
+}
+
+#fps {
+  position: absolute;
+  bottom: 4px;
+  left: 4px;
+  font-size: 10px;
+  color: #444;
+  z-index: 5;
+}
+
+/* Damage / Hit indicator */
+#damage-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, transparent 40%, rgba(239,68,68,0.25) 75%);
+  pointer-events: none;
+  opacity: 0;
+  z-index: 15;
+  transition: opacity 120ms ease;
+}
+
+/* MemeTorrent Wallet + Rockets styles */
+.wallet-hud {
+  position: absolute;
+  top: 16px;
+  right: 260px;
+  background: rgba(10,10,10,0.9);
+  border: 1px solid #333;
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #ddd;
+  z-index: 12;
+  cursor: pointer;
+  max-width: 240px;
+}
+.wallet-hud.connected { border-color: #c8a25f; }
+.wallet-info { display:flex; align-items:center; gap:4px; }
+.wallet-claim {
+  background: #c8a25f;
+  color: #111;
+  border: none;
+  padding: 1px 6px;
+  border-radius: 2px;
+  font-size: 9px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-left: 4px;
+}
+.wallet-toast {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #111;
+  border: 2px solid #c8a25f;
+  color: #c8a25f;
+  padding: 10px 18px;
+  border-radius: 4px;
+  font-size: 13px;
+  z-index: 100;
+  max-width: 380px;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(200,162,95,0.3);
+  white-space: pre-line;
+}
+.wallet-toast.fade { opacity: 0; transition: opacity .3s; }
+.rocket-float {
+  position: fixed;
+  left: 50%;
+  top: 42%;
+  transform: translate(-50%, -50%);
+  color: #c8a25f;
+  font-size: 16px;
+  font-weight: 700;
+  pointer-events: none;
+  z-index: 90;
+  animation: rocketPop 1.2s forwards;
+  text-shadow: 0 0 6px #000;
+}
+@keyframes rocketPop {
+  0% { opacity:1; transform: translate(-50%, -50%) scale(0.7); }
+  40% { opacity:1; }
+  100% { opacity:0; transform: translate(-50%, -140%) scale(1); }
+}
