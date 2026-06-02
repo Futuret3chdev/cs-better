@@ -1,5 +1,9 @@
 # Deploy CS: Better to GitHub + Vercel
 
+**Your current Vercel project:** https://vercel.com/futuret3chs-projects/cs-better
+
+**GitHub repo:** https://github.com/Futuret3chdev/cs-better (from local git remote)
+
 This project is a **pure static site** (no build step, no server code). It deploys instantly to Vercel, Netlify, or GitHub Pages.
 
 All assets are vendored locally (Three.js + Solana web3.js), so it works reliably everywhere.
@@ -73,9 +77,31 @@ If you get an auth error, use GitHub CLI (`gh auth login`) or Personal Access To
 
 ---
 
-## Step 4: Deploy to Vercel (Recommended)
+## Step 4: Connect Git and Deploy on Your Vercel Project (https://vercel.com/futuret3chs-projects/cs-better)
 
-### Option A: One-Click (Easiest)
+Since you already have the project created, do this in the dashboard to link Git and get all updates (including the latest UI polish and MT features that may be missing on the live site).
+
+1. Open https://vercel.com/futuret3chs-projects/cs-better
+2. In the sidebar, click **Settings** (or look for the "Connect Git Repository" card on Overview).
+3. Under **Git**, click **Connect Git Repository** (or "Connect" button).
+4. Select **GitHub**, authorize Vercel if prompted.
+5. Search and select the repo: **Futuret3chdev / cs-better**
+6. Choose the branch: **main**
+7. In the project settings (after connect or go to Settings > General):
+   - Framework Preset: **None**
+   - Root Directory: `.` (or leave default)
+   - Build Command: (empty)
+   - Output Directory: `.`
+   - Install Command: (empty)
+8. Save settings.
+9. Go to the **Deployments** tab.
+10. Click **Redeploy** on the most recent commit (the one after your latest `git push` with UI/MT changes). Choose Production.
+
+This will pull the full code from Git (all the polish commits) and update https://cs-better.vercel.app/ with everything.
+
+Future pushes to `main` will auto-deploy.
+
+### Option A: One-Click (Easiest - for new projects)
 
 1. Go to your new GitHub repo
 2. Edit `README.md`
@@ -90,16 +116,29 @@ If you get an auth error, use GitHub CLI (`gh auth login`) or Personal Access To
 6. Vercel will import the repo automatically.
 7. Click **Deploy**. Done in ~30 seconds.
 
-### Option B: Import Manually on Vercel
+### Option B: Connect to Existing Vercel Project (your current dashboard)
 
-1. Go to https://vercel.com/new
-2. Click **"Import Git Repository"**
-3. Select your `cs-better` repo
-4. Vercel auto-detects it's static (thanks to `vercel.json`)
-5. Click **Deploy**
+Since you have https://vercel.com/futuret3chs-projects/cs-better :
 
-Vercel will give you a URL like:
-`https://cs-better-abc123.vercel.app`
+1. Open the link: https://vercel.com/futuret3chs-projects/cs-better
+2. In the left sidebar, click **Settings** (or directly go to the Git section).
+3. Look for **"Connect Git Repository"** or **Git** tab.
+4. Connect your GitHub account if not already.
+5. Select the repository: **Futuret3chdev/cs-better** (or the exact name of your GitHub repo).
+6. Once connected:
+   - Set **Framework Preset** to **None** (or "Other").
+   - **Root Directory**: leave as `.` or blank (the vercel.json at root will handle it).
+   - Build Command, Output Directory, Install Command: leave empty (vercel.json overrides with `framework: null`, `outputDirectory: "."`, `buildCommand: null`).
+7. Save.
+8. Go back to **Deployments** tab.
+9. Find the latest commit from Git (the one with the UI polish or "Full deploy prep").
+10. Click **Redeploy** (Production).
+
+This will make future `git push` to main automatically deploy the full polished version with all features (wallet, rockets, clean UI, etc.).
+
+Your production domain is likely https://cs-better.vercel.app (or check Domains in dashboard).
+
+If the current production deployment is from a manual upload or old commit, the Redeploy step above will fix the "missing a lot of things".
 
 ---
 
