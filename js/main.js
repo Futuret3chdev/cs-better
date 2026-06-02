@@ -18,6 +18,7 @@ function initThree() {
   renderer.shadowMap.enabled = false; // cheap
 
   scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x0a0a0a); // solid dark bg so no black void
   scene.fog = new THREE.Fog(0x1a1814, 18, 72);
 
   camera = new THREE.PerspectiveCamera(
