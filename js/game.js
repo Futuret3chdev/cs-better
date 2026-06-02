@@ -146,7 +146,8 @@ function initGame(scene, camera, renderer) {
 
   resetRound(true);
   window.CSUI.showMenu(true, false);
-  window.CSUI.showCenterMessage('CS: BETTER', 'CLICK TO LOCK MOUSE AND START');
+  // Menu will instruct; after START, world appears (buy phase, you can move with WASD).
+  // Click canvas to lock mouse for looking/aiming.
 
   // Expose for debug
   window.game = GAME;
