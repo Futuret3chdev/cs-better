@@ -866,15 +866,7 @@ function updatePlayer(dt, now) {
   // Reload
   p.updateReload(now);
 
-  // Camera
-  GAME.camera.position.copy(p.position);
-  GAME.camera.position.y += p.crouching ? 0.55 : 0;
-
-  GAME.camera.rotation.order = 'YXZ';
-  GAME.camera.rotation.y = p.yaw;
-  GAME.camera.rotation.x = p.pitch;
-
-  // Update viewmodel
+  // Viewmodel update (camera sync is now always done in main loop for buy/live)
   const bob = (now * 1.6) % (Math.PI * 2);
   updateViewmodel(p.currentWeaponKey, 0, 0, bob); // recoil applied via camera already
 
@@ -1116,6 +1108,15 @@ function gameLoop(nowMs) {
   if (p && GAME.viewmodel) {
     const bob = (now * 1.4) % (Math.PI * 2);
     updateViewmodel(p.currentWeaponKey, 0, 0, bob);
+  }
+
+  // Always keep camera synced to player (important for buy phase view too, and after reset)
+  if (p && GAME.camera) {
+    GAME.camera.position.copy(p.position);
+    GAME.camera.position.y += p.crouching ? 0.55 : 0;
+    GAME.camera.rotation.order = 'YXZ';
+    GAME.camera.rotation.y = p.yaw;
+    GAME.camera.rotation.x = p.pitch;
   }
 
   updateProjectiles(dt);
