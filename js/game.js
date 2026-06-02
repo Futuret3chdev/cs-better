@@ -64,6 +64,11 @@ function initGame(scene, camera, renderer) {
   // Create viewmodel (simple gun in hands)
   createViewmodel(scene);
 
+  // Initial render so canvas isn't black even before first gameLoop frame
+  if (GAME.renderer && GAME.scene && GAME.camera) {
+    GAME.renderer.render(GAME.scene, GAME.camera);
+  }
+
   // Input listeners (will be attached in main)
   window.addEventListener('keydown', (e) => {
     GAME.keys[e.key.toLowerCase()] = true;
