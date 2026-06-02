@@ -1039,72 +1039,73 @@ function gameLoop(nowMs) {
     // handled by mousemove listener in main.js
   }
 
-  if (s.phase === 'live') {
+  if (s.phase === 'live' || s.phase === 'buy') {
     updatePlayer(dt, now);
 
-    if (p.health <= 0) {
-      if (!p._deathMsgShown) {
-        window.CSUI.showCenterMessage('YOU DIED', 'Round will end soon...', true);
-        p._deathMsgShown = true;
+    if (s.phase === 'live') {
+      if (p.health <= 0) {
+        if (!p._deathMsgShown) {
+          window.CSUI.showCenterMessage('YOU DIED', 'Round will end soon...', true);
+          p._deathMsgShown = true;
+        }
+      } else {
+        p._deathMsgShown = false;
       }
-    } else {
-      p._deathMsgShown = false;
-    }
-    updateBots(dt, now);
+      updateBots(dt, now);
 
-    // Bot plant logic (simple)
-    if (!s.bomb) {
-      GAME.bots.forEach(bot => {
-        if (bot.alive && bot.state === 'plant') {
-          for (let k in GAME.sites) {
-            const site = GAME.sites[k];
-            if (bot.position.distanceTo(site.center) < 2.8) {
-              s.bomb = { planted: true, site: k, position: site.center.clone(), timer: 40, defuseProgress: 0, defusing: false };
-              const bm = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.55, 10), new THREE.MeshLambertMaterial({ color: 0xcc2222 }));
-              bm.position.copy(site.center);
-              bm.position.y = 1.35;
-              GAME.scene.add(bm);
-              s.bomb.mesh = bm;
-              window.CSAudio && window.CSAudio.plant();
-              window.CSUI.showCenterMessage('BOMB PLANTED', 'DEFUSE OR LOSE', true);
-              GAME.plantProgress = 0;
-              GAME.plantingSite = null;
-              setTimeout(() => window.CSUI.hideCenterMessage(), 1500);
-              break;
+      // Bot plant logic (simple)
+      if (!s.bomb) {
+        GAME.bots.forEach(bot => {
+          if (bot.alive && bot.state === 'plant') {
+            for (let k in GAME.sites) {
+              const site = GAME.sites[k];
+              if (bot.position.distanceTo(site.center) < 2.8) {
+                s.bomb = { planted: true, site: k, position: site.center.clone(), timer: 40, defuseProgress: 0, defusing: false };
+                const bm = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.55, 10), new THREE.MeshLambertMaterial({ color: 0xcc2222 }));
+                bm.position.copy(site.center);
+                bm.position.y = 1.35;
+                GAME.scene.add(bm);
+                s.bomb.mesh = bm;
+                window.CSAudio && window.CSAudio.plant();
+                window.CSUI.showCenterMessage('BOMB PLANTED', 'DEFUSE OR LOSE', true);
+                GAME.plantProgress = 0;
+                GAME.plantingSite = null;
+                setTimeout(() => window.CSUI.hideCenterMessage(), 1500);
+                break;
+              }
             }
           }
-        }
-      });
-    }
-
-    updateBomb(dt);
-    checkWinConditions(dt);
-
-    // Auto-hide stale interaction prompts when not near anything
-    if (!eHeld && !s.bomb && !GAME.plantingSite) {
-      const cm = document.getElementById('center-message');
-      if (cm && (cm.textContent.includes('PLANT') || cm.textContent.includes('HOLD E'))) {
-        window.CSUI.hideCenterMessage();
+        });
       }
-    }
 
-    // Pending left click shot
-    if (GAME.pendingShoot) {
-      GAME.pendingShoot = false;
-      fireWeapon(now);
-    }
+      updateBomb(dt);
+      checkWinConditions(dt);
 
-    // Auto scope visual feedback (right mouse held)
-    const rightHeld = GAME.keys[''] || false; // we don't track easily, skip for now
+      // Auto-hide stale interaction prompts when not near anything
+      if (!eHeld && !s.bomb && !GAME.plantingSite) {
+        const cm = document.getElementById('center-message');
+        if (cm && (cm.textContent.includes('PLANT') || cm.textContent.includes('HOLD E'))) {
+          window.CSUI.hideCenterMessage();
+        }
+      }
 
-  } else if (s.phase === 'buy') {
-    s.buyTimeLeft -= dt;
-    s.roundTimeLeft = s.buyTimeLeft;
-    if (s.buyTimeLeft <= 0) {
-      startLivePhase();
+      // Pending left click shot
+      if (GAME.pendingShoot) {
+        GAME.pendingShoot = false;
+        fireWeapon(now);
+      }
+
+      // Auto scope visual feedback (right mouse held)
+      const rightHeld = GAME.keys[''] || false; // we don't track easily, skip for now
+
+    } else if (s.phase === 'buy') {
+      s.buyTimeLeft -= dt;
+      s.roundTimeLeft = s.buyTimeLeft;
+      if (s.buyTimeLeft <= 0) {
+        startLivePhase();
+      }
+      // In buy we allow movement via updatePlayer above; no shooting (pending handled only in live)
     }
-    // Allow movement in buy? No, freeze for simplicity
-    p.velocity.set(0, 0, 0);
   } else if (s.phase === 'paused') {
     // nothing
   }
