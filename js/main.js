@@ -12,6 +12,7 @@ function initThree() {
     antialias: true,
     alpha: false
   });
+  renderer.setClearColor(0x000000, 1); // ensure black clear instead of transparent/black default issues
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.shadowMap.enabled = false; // cheap

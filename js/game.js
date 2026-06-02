@@ -1142,6 +1142,11 @@ function gameLoop(nowMs) {
     GAME.lastFpsTime = now;
   }
 
+  // Render the 3D scene (was missing - this is why canvas was black)
+  if (GAME.renderer && GAME.scene && GAME.camera) {
+    GAME.renderer.render(GAME.scene, GAME.camera);
+  }
+
   // Request next
   requestAnimationFrame(gameLoop);
 }
