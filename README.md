@@ -1,148 +1,189 @@
 # CS: Better
 
-**Counter-Strike but better.** A fully client-side tactical FPS that runs in any modern browser.
+**Counter-Strike but better.** A fully playable, browser-based tactical FPS with deterministic gunplay, procedural audio, and deep MemeTorrent P2E integration.
 
-Deterministic recoil you can actually learn, procedural audio, full round-based bomb defusal, smart bots that plant the bomb, and a polished CS-style HUD — all in ~1MB total with zero dependencies.
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fyourusername%2Fcs-better)
-
-> **See full deployment instructions:** [DEPLOY.md](./DEPLOY.md)
-
-After deploying, update the Vercel button link + demo URL in this README with your real Vercel URL.
+Play instantly in any modern browser. No downloads. No installs. Just click and frag.
 
 ![Game Preview](assets/preview.jpg)
 
-## Play Instantly
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fyourusername%2Fcs-better)
 
-```bash
-# 1. Clone
-git clone https://github.com/YOUR_USERNAME/cs-better.git   # ← replace YOUR_USERNAME with your GitHub username
-cd cs-better
+<!-- After creating your GitHub repo, replace "yourusername" above with your actual username -->
 
-# 2. Run locally (any of these)
-python -m http.server 8080
-# or
-npx serve
-# or just open index.html (limited features)
-```
+> **See full deployment instructions:** [DEPLOY.md](./DEPLOY.md)
 
-Then open **http://localhost:8080** in **Chrome** (best Pointer Lock + Audio support).
-
-## Controls
-
-| Action            | Input                        |
-|-------------------|------------------------------|
-| Move              | WASD                         |
-| Jump              | Space                        |
-| Crouch            | Ctrl / C (hold)              |
-| Walk (silent)     | Shift (hold)                 |
-| Shoot             | Left Mouse                   |
-| Scope / ADS       | Right Mouse                  |
-| Reload            | R                            |
-| Switch weapons    | 1–5 or Mouse Wheel           |
-| Buy menu          | B (buy phase only)           |
-| Plant / Defuse    | E (hold near site/bomb)      |
-| Menu / Pause      | Esc                          |
-| Lock mouse        | Click the game               |
-
-**Pro tip:** Learn the AK spray pattern on a wall — it's 100% the same every time.
+---
 
 ## Features
 
-- True 3D first-person with full momentum-based movement + bunnyhop potential
-- **Deterministic recoil** — every weapon has a fixed, learnable pattern (the #1 "better than CS" feature)
-- 3 distinct weapons: Glock-18, AK-47, AWP
-- 5 enemy bots with vision, pathing, and objective play (they will plant)
-- Classic bomb defusal (A/B sites, plant, 40s timer, defuse)
-- Full economy + buy phase
-- Beautiful CS-style HUD: radar, killfeed, money, health/armor, round timer
-- Fully procedural audio (Web Audio) — no sound files
-- Customizable crosshair + sensitivity saved in localStorage
-- Works offline after first load (once vendored)
+- **True 3D first-person tactical shooter** built with Three.js
+- **Deterministic recoil patterns** — learn the spray, master the AK. 100% predictable (no RNG)
+- **Full CS-style gameplay**: Buy phase, economy, bomb defusal (A/B sites), one-life rounds
+- **Smart bots** that move, peek, shoot back, and even plant the bomb
+- **Procedural audio** — every gunshot, footstep, and reload is synthesized live (crisp, unique, no asset files)
+- **Polished HUD**: Radar, killfeed, health/armor, ammo, money, round timer, customizable crosshair
+- **Modern movement**: Momentum, bunnyhop potential, crouch, walk, jump
+- **Wallet-connected P2E** — earn and claim **Rockets** for the MemeTorrent ecosystem
 
-## MemeTorrent P2E & Wallet Integration
+### MemeTorrent P2E Integration (by memetorrent & futuret3ch)
 
-**Wallet connect enabled** for Phantom, Solflare, and Backpack (Solana).
+**Wallet connect enabled** for:
+- Phantom
+- Solflare
+- Backpack
 
-- Earn **🚀 Rockets** through kills (15 base, +10 headshot), bomb plants (+120), defuses (+180), and round performance bonuses.
-- Click the top wallet pill or the "CONNECT WALLET" button in the main menu.
-- With a wallet connected, use the **CLAIM** button to sign a message proving your score and submit it to the MemeTorrent P2E Arcade.
-- Rockets contribute to the MT ecosystem (rewards, airdrops, leaderboards, engagement).
-- **Created by memetorrent and futuret3ch** for the MemeTorrent ($MT) ecosystem.
+**How it works:**
+- Earn **🚀 Rockets** by:
+  - Killing bots (15 base, +10 on headshots)
+  - Planting the bomb (+120)
+  - Defusing the bomb (+180)
+  - Winning rounds with good performance
+- Connect your Solana wallet from the main menu or the top HUD pill
+- Use the **CLAIM** button to cryptographically sign and submit your score
+- Rockets feed into the MemeTorrent P2E Arcade (rewards, airdrops, leaderboards, engagement)
 
-$MT CA: `ELywDcVX2WumHm4xEfqF8NdEKaeGCAaq9JmwtjE8pump`
+$MT token: `ELywDcVX2WumHm4xEfqF8NdEKaeGCAaq9JmwtjE8pump`
 
-Your signed claims are verifiable proof of on-chain participation.
+Your signed claims are verifiable proof of participation in the MT ecosystem.
 
-## Deploy to Vercel + GitHub (Recommended)
+---
 
-**Full step-by-step instructions (including GitHub repo creation):**  
-→ See [DEPLOY.md](./DEPLOY.md)
+## Controls
 
-Quick version:
-1. Push this folder to a new GitHub repo.
-2. Click the **Deploy with Vercel** button (or import on vercel.com).
-3. Update the links in this README after your first deploy.
+| Action             | Input                          |
+|--------------------|--------------------------------|
+| Move               | WASD                           |
+| Jump               | Space                          |
+| Crouch             | Ctrl or C (hold)               |
+| Walk (silent)      | Shift (hold)                   |
+| Shoot              | Left Mouse                     |
+| Aim / Scope        | Right Mouse                    |
+| Reload             | R                              |
+| Weapon Switch      | 1–5 or Mouse Wheel             |
+| Buy Menu           | B (during buy phase)           |
+| Plant / Defuse     | E (hold near site or bomb)     |
+| Pause / Menu       | Esc                            |
+| Lock Mouse         | Click the game area            |
 
-Vercel gives you free HTTPS (required for wallet connect + mouse aim). Auto-deploys on every `git push`.
+**Pro tip:** The AK recoil is fully deterministic. Practice your spray on a wall.
+
+**Dev cheats:** Press `9` for free money + AK. Press `=` to add test Rockets.
+
+---
+
+## Play Instantly
+
+### Local (Recommended for testing)
+
+```bash
+# Clone
+git clone https://github.com/YOUR_USERNAME/cs-better.git
+cd cs-better
+
+# Run (pick one)
+python -m http.server 8080
+# or
+npx serve
+```
+
+Open **http://localhost:8080** in **Chrome** (best support for mouse lock + audio + wallets).
+
+### Live Demo
+
+After deploying (see [DEPLOY.md](./DEPLOY.md)), replace the Vercel button and add your live URL here.
+
+---
 
 ## Project Structure
 
 ```
 cs-better/
-├── index.html          # Main game + HUD
-├── style.css           # Tactical dark UI
-├── manifest.json       # PWA manifest (fullscreen, landscape)
-├── vercel.json         # Vercel config + caching + headers
-├── LICENSE
+├── index.html          # Game shell + HUD + meta tags
+├── style.css           # Tactical dark UI theme
+├── manifest.json       # PWA manifest (fullscreen mode)
+├── vercel.json         # Vercel static deploy config + headers
+├── LICENSE             # MIT
 ├── .gitignore
 ├── README.md
-├── GAME_DESIGN.md      # Full design doc & future roadmap
+├── DEPLOY.md           # GitHub + Vercel deployment guide
+├── GAME_DESIGN.md      # Full original design doc
 ├── assets/
-│   └── preview.jpg     # Social / README image
+│   └── preview.jpg     # Social preview image
 └── js/
-    ├── three.min.js    # Vendored Three.js r134 (~600KB)
-    ├── audio.js        # Procedural gunshot, footstep, UI synth
+    ├── three.min.js    # Vendored Three.js (r134)
+    ├── solana-web3.min.js # Vendored Solana web3.js
+    ├── wallet.js       # Phantom / Solflare / Backpack + Rockets claiming
+    ├── audio.js        # Procedural Web Audio (guns, steps, UI)
     ├── weapons.js      # Weapon data + fixed recoil tables
-    ├── entities.js     # Player + Bot AI
-    ├── map.js          # Dust II Mini level
-    ├── ui.js           # HUD, radar, buy menu, settings
-    ├── game.js         # Core loop, shooting, rounds, bomb
-    └── main.js         # Bootstrap + input
+    ├── entities.js     # Player + Bot AI + collision
+    ├── map.js          # Dust II Mini level builder
+    ├── ui.js           # HUD, radar, buy menu, settings, modals
+    ├── game.js         # Core loop, shooting, rounds, bomb logic, MT integration
+    └── main.js         # Three.js bootstrap + input + menu wiring
 ```
-
-## Development
-
-- Everything is vanilla JS + Three.js. No bundler required.
-- Open DevTools → Console. `window.game` gives you the full game state for debugging.
-- Press `9` in-game → free money + AK (dev cheat).
-- Edit recoil patterns live in `js/weapons.js` → refresh.
-
-## Tech
-
-- Three.js (vendored)
-- Web Audio API (procedural everything)
-- Pointer Lock API
-- Pure static — works on any host that serves files over HTTPS
-
-## Roadmap (see GAME_DESIGN.md)
-
-- Grenades (HE, Flash, Smoke)
-- More weapons + better buy menu
-- Second map
-- Improved bot personalities + utility usage
-- Wallbangs with visual feedback
-- Full crosshair editor in-game
-- Local stats & progression
-
-## Credits
-
-Built as a fun ambitious weekend project. Deterministic gunplay and zero-dependency philosophy are the soul of this game.
-
-**MemeTorrent P2E integration created by memetorrent & futuret3ch.**
-
-**GLHF. Headshots only.**
 
 ---
 
-Made to be forked, deployed, and extended. Have fun!
+## Development
+
+- Pure vanilla JavaScript + Three.js. No bundler, no build step.
+- Open DevTools → Console for `window.game` (full game state) and debugging.
+- All game logic is in `js/game.js`. Recoil tables live in `js/weapons.js`.
+- Wallet logic (connect + signMessage for claims) is in `js/wallet.js`.
+- Rockets are tracked in-memory + persisted per wallet in localStorage.
+
+**Adding new weapons or changing recoil** is as simple as editing the data in `weapons.js` and refreshing.
+
+---
+
+## Tech Stack
+
+- Three.js (3D rendering)
+- Web Audio API (procedural sound)
+- Pointer Lock API (mouse look)
+- Solana browser wallets (Phantom, Solflare, Backpack)
+- Pure static files — works on Vercel, Netlify, GitHub Pages, etc.
+
+---
+
+## Deployment
+
+**Full instructions (GitHub repo creation + Vercel):**  
+See [DEPLOY.md](./DEPLOY.md)
+
+**Quick Vercel deploy:**
+1. Push the folder to GitHub.
+2. Click the Deploy button above (or import on vercel.com).
+3. Update the button + demo link in this README after your first deploy.
+
+Vercel provides the HTTPS required for wallet signing and pointer lock.
+
+---
+
+## Roadmap
+
+See [GAME_DESIGN.md](./GAME_DESIGN.md) for the original full vision.
+
+Current priorities:
+- Grenades (HE, Flash, Smoke)
+- More weapons + improved buy menu
+- Second map
+- Better bot AI + personalities
+- On-chain claim improvements / leaderboards
+- Full crosshair editor
+
+---
+
+## Credits
+
+**Core game** built as an ambitious interactive project with Grok.
+
+**MemeTorrent P2E wallet integration + Rockets system** created by **memetorrent** and **futuret3ch**.
+
+$MT ecosystem: [memetorrent.futuret3ch.com.au](https://memetorrent.futuret3ch.com.au/)
+
+---
+
+**GLHF. Headshots only. 🚀**
+
+Made to be forked, played, deployed, and extended. Have fun!
