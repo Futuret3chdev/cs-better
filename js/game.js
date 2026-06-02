@@ -1170,6 +1170,7 @@ function startGame() {
   GAME.state.phase = 'buy';
   window.CSUI.hideMenu();
   resetRound(true);
+  window.CSUI.showCenterMessage('Buy phase: WASD to move, B to buy. Live soon. Click canvas to lock mouse for look.');
   // Start first live after buy
   setTimeout(() => {
     if (GAME.state.phase === 'buy') startLivePhase();
