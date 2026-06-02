@@ -149,6 +149,55 @@ git push
 
 ---
 
+## Complete Git Commands Sequence (Run These to Deploy Properly)
+
+Copy and run these commands one by one in PowerShell from your E:\cs-better folder. This ensures all UI polish, MT integration, map improvements, docs, and notes are included.
+
+```powershell
+# 1. Navigate to the project
+cd E:\cs-better
+
+# 2. Make sure you have the absolute latest from GitHub (including any previous pushes)
+git fetch origin
+git pull origin main
+
+# 3. Check current state (should be clean or show only your local edits)
+git status
+
+# 4. Stage ALL changes (this catches any uncommitted polish, new files, etc.)
+git add -A
+
+# 5. Commit with a comprehensive message covering everything (UI, wallet, rockets, docs, etc.)
+git commit -m "Full deploy prep: UI polish (clean menu + grouped top-right MT pill), visual map improvements (Phong + lights), wallet integration (Phantom/Solflare/Backpack + Rockets), Important Notes section, DEPLOY.md updates, and trigger for Vercel"
+
+# If the commit says "nothing to commit", that's fine — everything is already committed. Skip to push.
+
+# 6. Push to GitHub (this will trigger Vercel auto-deploy if connected)
+git push origin main
+
+# 7. Verify the push
+git status
+git log --oneline -5
+```
+
+After the push succeeds:
+
+- Go to https://github.com/Futuret3chdev/cs-better (or your fork) and confirm the latest commit is there.
+
+- Vercel should start building automatically. Watch the deployment at vercel.com.
+
+If Vercel does not auto-deploy or the live site is still old:
+
+- Log into Vercel dashboard
+- Select the cs-better project
+- Go to **Deployments**
+- Find the commit you just pushed
+- Click the three dots → **Redeploy** (to Production)
+
+This will force a fresh build with ALL the missing pieces (polished HUD, clean menu, working MT wallet/rockets UI, better 3D visuals, proper docs, etc.).
+
+---
+
 ## Updating the Game Later
 
 1. Make changes locally

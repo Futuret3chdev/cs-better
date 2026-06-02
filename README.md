@@ -148,13 +148,14 @@ cs-better/
 
 ## Deployment
 
-**Full instructions (GitHub repo creation + Vercel):**  
-See [DEPLOY.md](./DEPLOY.md)
+**Complete Git commands + full instructions (to ensure NOTHING is missing):**  
+See the **"Complete Git Commands Sequence (Run These to Deploy Properly)"** section inside [DEPLOY.md](./DEPLOY.md).
 
-**Quick Vercel deploy:**
-1. Push the folder to GitHub.
-2. Click the Deploy button above (or import on vercel.com).
-3. Update the button + demo link in this README after your first deploy.
+This covers pull, add -A, comprehensive commit, push, and forcing Vercel redeploy if the live site (https://cs-better.vercel.app/) is stale.
+
+**Quick summary:**
+1. Run the full PowerShell sequence from DEPLOY.md (it pulls latest, stages everything, commits with a message that includes all UI/MT/map/docs changes, pushes).
+2. On Vercel, if auto-deploy doesn't catch it or the site still looks old, go to Deployments tab and manually **Redeploy** the latest commit to Production.
 
 Vercel provides the HTTPS required for wallet signing and pointer lock.
 
