@@ -30,3 +30,6 @@ build/
 .env.local
 *.bak
 *.tmp
+
+.vercel
+.env*
