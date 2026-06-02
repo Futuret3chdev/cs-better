@@ -79,27 +79,35 @@ If you get an auth error, use GitHub CLI (`gh auth login`) or Personal Access To
 
 ## Step 4: Connect Git and Deploy on Your Vercel Project (https://vercel.com/futuret3chs-projects/cs-better)
 
-Since you already have the project created, do this in the dashboard to link Git and get all updates (including the latest UI polish and MT features that may be missing on the live site).
+**Critical:** The dashboard says "framework is set to vite". This is why things are missing/broken on the live site — Vite is trying to build it (looking for vite.config, running build to dist/, etc.), but this is a pure static site with no package.json or Vite setup. The vercel.json is set to override it, but the project-level setting in UI overrides detection.
+
+Since you already have the project created, do this in the dashboard:
 
 1. Open https://vercel.com/futuret3chs-projects/cs-better
-2. In the sidebar, click **Settings** (or look for the "Connect Git Repository" card on Overview).
-3. Under **Git**, click **Connect Git Repository** (or "Connect" button).
-4. Select **GitHub**, authorize Vercel if prompted.
+2. In the sidebar, click **Settings** (or look for "Connect Git Repository" on Overview).
+3. Under **Git**, click **Connect Git Repository** (or "Connect" button) if not already linked.
+4. Select **GitHub**, authorize if needed.
 5. Search and select the repo: **Futuret3chdev / cs-better**
-6. Choose the branch: **main**
-7. In the project settings (after connect or go to Settings > General):
-   - Framework Preset: **None**
-   - Root Directory: `.` (or leave default)
-   - Build Command: (empty)
-   - Output Directory: `.`
-   - Install Command: (empty)
-8. Save settings.
-9. Go to the **Deployments** tab.
-10. Click **Redeploy** on the most recent commit (the one after your latest `git push` with UI/MT changes). Choose Production.
+6. Choose branch: **main**
+7. **IMPORTANT - Fix the Vite framework detection:**
+   - Go to **Settings > General**
+   - Find **Framework Preset**
+   - Change from "Vite" to **None** (or "Other")
+   - Root Directory: leave as `.` or blank
+   - Build Command: leave blank/empty (vercel.json controls it)
+   - Output Directory: `.` 
+   - Install Command: blank
+   - Save
+8. (Optional but recommended) Go to **Settings > Environment Variables** and make sure none are conflicting.
+9. Go to **Deployments** tab.
+10. Find the latest commit from your git push.
+11. Click the three dots > **Redeploy** > Production.
 
-This will pull the full code from Git (all the polish commits) and update https://cs-better.vercel.app/ with everything.
+This forces Vercel to treat it as static (respecting your vercel.json with "framework": null), pulls all the code including UI polish, wallet features, etc.
 
-Future pushes to `main` will auto-deploy.
+Future `git push origin main` will auto-deploy correctly.
+
+Your prod URL: https://cs-better.vercel.app/ (or check Domains in dashboard).
 
 ### Option A: One-Click (Easiest - for new projects)
 
