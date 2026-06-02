@@ -339,7 +339,7 @@ function createBotMesh(side) {
   const bodyColor = side === 'ct' ? 0x3b5f8a : 0x7a2f2f;
 
   const body = new THREE.Mesh(
-    new THREE.CapsuleGeometry(0.38, 0.9, 3, 12),
+    new THREE.CylinderGeometry(0.38, 0.38, 0.9, 12),
     new THREE.MeshLambertMaterial({ color: bodyColor })
   );
   body.position.y = 1.0;

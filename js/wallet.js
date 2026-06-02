@@ -171,8 +171,6 @@ function saveWalletStats(pubKeyStr) {
   } catch (e) {}
 }
 
-async // Balance fetch removed (was using old #wallet-balance element)
-
 async function claimRockets() {
   if (!walletState.connected || !walletState.provider) {
     alert('Connect a wallet first!');
