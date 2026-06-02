@@ -45,6 +45,7 @@ const GAME = {
 
   // MemeTorrent P2E - Rockets earned for MT ecosystem (by memetorrent & futuret3ch)
   mtWallet: null,
+  lastPointerUnlockTime: 0,
 };
 
 function initGame(scene, camera, renderer) {
@@ -135,11 +136,13 @@ function initGame(scene, camera, renderer) {
 
   // Pointer lock change
   document.addEventListener('pointerlockchange', () => {
+    const wasLocked = GAME.mouseLocked;
     GAME.mouseLocked = !!document.pointerLockElement;
     const phase = GAME.state.phase;
     if (!GAME.mouseLocked && (phase === 'live' || phase === 'buy')) {
+      GAME.lastPointerUnlockTime = Date.now();
       window.CSUI.showCenterMessage('Click the game to lock mouse and play');
-    } else {
+    } else if (GAME.mouseLocked) {
       window.CSUI.hideCenterMessage();
     }
   });
@@ -193,6 +196,7 @@ function createViewmodel(scene) {
 
   vm.userData.barrel = barrel;
   vm.userData.body = body;
+  vm.userData.grip = grip;
 }
 
 function updateViewmodel(weaponKey, recoilPitch, recoilYaw, bob) {
@@ -214,13 +218,20 @@ function updateViewmodel(weaponKey, recoilPitch, recoilYaw, bob) {
     0
   );
 
-  // Different visual for sniper
+  // Different visual per weapon type (pistol small, rifle, sniper long)
   if (w.type === 'sniper') {
-    if (vm.userData.body) vm.userData.body.scale.set(1.1, 0.9, 1.35);
-    if (vm.userData.barrel) vm.userData.barrel.scale.set(0.7, 0.7, 1.35);
+    if (vm.userData.body) vm.userData.body.scale.set(1.0, 0.8, 1.8);
+    if (vm.userData.barrel) vm.userData.barrel.scale.set(0.6, 0.6, 2.0);
+    if (vm.userData.grip) vm.userData.grip.scale.set(1, 1, 1);
+  } else if (w.type === 'rifle') {
+    if (vm.userData.body) vm.userData.body.scale.set(1.0, 1.0, 1.3);
+    if (vm.userData.barrel) vm.userData.barrel.scale.set(0.8, 0.8, 1.4);
+    if (vm.userData.grip) vm.userData.grip.scale.set(1, 1, 1);
   } else {
-    if (vm.userData.body) vm.userData.body.scale.set(1, 1, 1);
-    if (vm.userData.barrel) vm.userData.barrel.scale.set(1, 1, 1);
+    // pistol
+    if (vm.userData.body) vm.userData.body.scale.set(0.8, 0.8, 0.9);
+    if (vm.userData.barrel) vm.userData.barrel.scale.set(0.9, 0.9, 0.7);
+    if (vm.userData.grip) vm.userData.grip.scale.set(0.8, 0.8, 0.8);
   }
 }
 
@@ -250,6 +261,12 @@ function tryReload() {
 async function lockMouse() {
   const canvas = document.getElementById('three-canvas');
   canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock;
+  // Prevent trying to re-lock too soon after unlock (browser security)
+  if (GAME.lastPointerUnlockTime && (Date.now() - GAME.lastPointerUnlockTime < 300)) {
+    console.warn('Pointer lock request too soon after unlock, waiting for gesture...');
+    window.CSUI.showCenterMessage('Click the game again to lock mouse and play');
+    return;
+  }
   try {
     await canvas.requestPointerLock();
     if (window.CSAudio) window.CSAudio.resume();
@@ -1041,7 +1058,6 @@ function gameLoop(nowMs) {
 
   const s = GAME.state;
   const p = GAME.player;
-  const eHeld = GAME.keys['e'] || GAME.keys['e'.toUpperCase()];
 
   // Update input driven things
   if (GAME.mouseLocked && (s.phase === 'live' || s.phase === 'buy')) {
@@ -1091,7 +1107,8 @@ function gameLoop(nowMs) {
       checkWinConditions(dt);
 
       // Auto-hide stale interaction prompts when not near anything
-      if (!eHeld && !s.bomb && !GAME.plantingSite) {
+      const currentEHeld = GAME.keys['e'] || GAME.keys['e'.toUpperCase()];
+      if (!currentEHeld && !s.bomb && !GAME.plantingSite) {
         const cm = document.getElementById('center-message');
         if (cm && (cm.textContent.includes('PLANT') || cm.textContent.includes('HOLD E'))) {
           window.CSUI.hideCenterMessage();
