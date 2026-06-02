@@ -1041,6 +1041,7 @@ function gameLoop(nowMs) {
 
   const s = GAME.state;
   const p = GAME.player;
+  const eHeld = GAME.keys['e'] || GAME.keys['e'.toUpperCase()];
 
   // Update input driven things
   if (GAME.mouseLocked && (s.phase === 'live' || s.phase === 'buy')) {
