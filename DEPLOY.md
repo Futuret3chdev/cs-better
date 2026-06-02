@@ -302,6 +302,9 @@ Your site will be at:
 - **Mouse doesn't lock**: Click the game area first. Some browsers block on http://.
 - **Rockets not saving**: They are stored per-wallet in browser localStorage. Different browser = different data.
 - **Build fails on Vercel**: Check the deploy logs. This project has `vercel.json` with `buildCommand: null`, so it should just serve the files.
+- **manifest.json 401 or favicon 404**: On Vercel preview deployments (the -hash- urls), if "Vercel Authentication" or "Deployment Protection" is enabled in project Settings, static assets like manifest.json may return 401 for unauthenticated viewers. Go to project Settings > General > Vercel Authentication and set to "None" (or disable protection for previews). The game runs fine without the manifest (it's for optional PWA install). Favicon is a data URL now.
+- **Black screen / only radar visible, or JS errors like "CapsuleGeometry not constructor" or "async is not defined"**: These were fixed in recent commits (using CylinderGeometry instead, removing stray code). Make sure you redeploy the *latest* commit after `git push`. The errors prevented full init (no bots, no movement logic).
+- **Can't move / nothing interactive / settings doesn't work**: After START MATCH, the game enters buy phase (you can move around spawn now). Click the canvas to lock mouse for look. WASD to move. Full shooting etc. after the phase goes live (timer at top). Settings button is in the main/paused menu (press Esc to pause and access). Make sure no JS errors in console blocking init. Sens/volume/crosshair update live in the settings modal.
 
 ---
 
