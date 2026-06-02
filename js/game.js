@@ -46,6 +46,7 @@ const GAME = {
   // MemeTorrent P2E - Rockets earned for MT ecosystem (by memetorrent & futuret3ch)
   mtWallet: null,
   lastPointerUnlockTime: 0,
+  _lastLockAttempt: 0,
 };
 
 function initGame(scene, camera, renderer) {
@@ -143,6 +144,7 @@ function initGame(scene, camera, renderer) {
       GAME.lastPointerUnlockTime = Date.now();
       window.CSUI.showCenterMessage('Click the game to lock mouse and play');
     } else if (GAME.mouseLocked) {
+      GAME.lastPointerUnlockTime = 0;
       window.CSUI.hideCenterMessage();
     }
   });
@@ -260,26 +262,47 @@ function tryReload() {
 
 async function lockMouse() {
   const canvas = document.getElementById('three-canvas');
-  canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock;
-  // Prevent trying to re-lock too soon after unlock (browser security)
-  if (GAME.lastPointerUnlockTime && (Date.now() - GAME.lastPointerUnlockTime < 300)) {
-    console.warn('Pointer lock request too soon after unlock, waiting for gesture...');
+  if (!canvas) return;
+  // Already locked for this canvas - no need to request (prevents some re-acquire issues)
+  if (document.pointerLockElement === canvas) {
+    GAME.mouseLocked = true;
+    return;
+  }
+  canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock || canvas.webkitRequestPointerLock;
+  const now = Date.now();
+  // Prevent trying to re-lock too soon after unlock (browser security - "cannot be acquired immediately after the user has exited the lock")
+  if (GAME.lastPointerUnlockTime && (now - GAME.lastPointerUnlockTime < 500)) {
     window.CSUI.showCenterMessage('Click the game again to lock mouse and play');
     return;
   }
+  // Throttle rapid attempts from multiple events (mousedown + resume etc)
+  if (GAME._lastLockAttempt && (now - GAME._lastLockAttempt < 180)) {
+    return;
+  }
+  GAME._lastLockAttempt = now;
   try {
     await canvas.requestPointerLock();
+    GAME.mouseLocked = true;
     if (window.CSAudio) window.CSAudio.resume();
     window.CSUI.hideCenterMessage();
+    GAME.lastPointerUnlockTime = 0; // clear guard after successful acquire
   } catch (e) {
-    console.warn('Pointer lock failed (user gesture required?):', e);
-    window.CSUI.showCenterMessage('Click the game to lock mouse and play');
+    const msg = (e && (e.message || e.name || '')).toString();
+    if (e && (e.name === 'SecurityError' || /gesture|immediately after|exited the lock/i.test(msg))) {
+      // Expected when user exited (Esc) and click-to-resume happens near the boundary, or no fresh gesture.
+      // Do not spam console.warn for this common case; UI message is sufficient.
+      window.CSUI.showCenterMessage('Click the game to lock mouse and play');
+    } else {
+      console.warn('Pointer lock failed (user gesture required?):', e);
+      window.CSUI.showCenterMessage('Click the game to lock mouse and play');
+    }
   }
 }
 
 function togglePause() {
   if (GAME.state.phase === 'live' || GAME.state.phase === 'buy') {
     window.CSUI.showMenu(true, true);
+    GAME.lastPointerUnlockTime = Date.now();
     GAME.state.phase = 'paused';
   } else if (GAME.state.phase === 'paused') {
     window.CSUI.hideMenu();
@@ -1106,11 +1129,22 @@ function gameLoop(nowMs) {
       updateBomb(dt);
       checkWinConditions(dt);
 
-      // Auto-hide stale interaction prompts when not near anything
-      const currentEHeld = GAME.keys['e'] || GAME.keys['e'.toUpperCase()];
-      if (!currentEHeld && !s.bomb && !GAME.plantingSite) {
+      // Auto-hide stale interaction prompts when not near anything.
+      // Inline key check (no 'eHeld' symbol in gameLoop scope) to prevent any ReferenceError
+      // even if older bundles or edits copy logic from updatePlayer. Also only hide when
+      // truly not near a site so the "HOLD E TO PLANT" prompt stays visible while near + !E.
+      let nearSiteNow = null;
+      for (let k in GAME.sites) {
+        const site = GAME.sites[k];
+        if (p.position.distanceTo(site.center) < (site.radius || 2.5)) {
+          nearSiteNow = k;
+          break;
+        }
+      }
+      const eHeldCheck = GAME.keys && (GAME.keys['e'] || GAME.keys['e'.toUpperCase()]);
+      if (!nearSiteNow && !s.bomb && !GAME.plantingSite) {
         const cm = document.getElementById('center-message');
-        if (cm && (cm.textContent.includes('PLANT') || cm.textContent.includes('HOLD E'))) {
+        if (cm && (cm.textContent.includes('PLANT') || cm.textContent.includes('HOLD E') || cm.textContent.includes('DEFUSE'))) {
           window.CSUI.hideCenterMessage();
         }
       }
@@ -1202,6 +1236,7 @@ function resumeGame() {
     GAME.state.phase = 'live';
   }
   window.CSUI.hideMenu();
+  GAME.lastPointerUnlockTime = 0; // fresh gesture from resume button click
   lockMouse();
   requestAnimationFrame(gameLoop);
 }
