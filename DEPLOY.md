@@ -255,27 +255,30 @@ This will force a fresh build with ALL the missing pieces (polished HUD, clean m
 
 ---
 
-## Alternative: Deploy with Vercel CLI (no GitHub required)
+## Alternative: Deploy with Vercel CLI (bypasses some Git/UI settings, useful to force static)
+
+If the dashboard still shows Vite even after setting to None, use CLI to deploy directly (it respects vercel.json strictly).
 
 ```powershell
-# Install Vercel CLI (once)
+# 1. Install Vercel CLI if not already (run in PowerShell)
 npm i -g vercel
 
-# Login
+# 2. Login (opens browser, or use token if you have one: vercel login --token YOUR_TOKEN)
 vercel login
 
-# Deploy from the project folder
+# 3. From project dir, link to your Vercel project (interactive: select team "futuret3chs-projects", project "cs-better")
 cd E:\cs-better
-vercel
+npx vercel link
 
-# Follow the prompts. Choose "Yes" to link to a project.
+# 4. Deploy to production (this will use your vercel.json with framework: null, ignoring any Vite detection in UI)
+npx vercel --prod
 ```
 
-For production deploys:
+This deploys the current local files as static, pulling all the code. After successful, the dashboard will reflect the new deployment.
 
-```powershell
-vercel --prod
-```
+You can also run `npx vercel` for preview URL first.
+
+Note: After CLI deploy, you can still connect Git for future auto-deploys.
 
 ---
 
